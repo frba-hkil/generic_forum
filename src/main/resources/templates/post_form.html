@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Create a post</title>
+</head>
+<body>
+    <div layout:fragment="content" class="container">
+        <h5 class="my-3 border-bottom pb-2">Write your post here</h5>
+        <form  th:method="post" th:object="${postForm}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <div class="mb-3">
+                <label for="titleInput" class="form-label">Title goes here</label><br>
+                <input id="titleInput" th:field="*{titleInput}" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="writePost" class="form-label">Write your post content</label>
+                <textarea th:field="*{writePost}" id="writePost" class="form-control"></textarea><br>
+            </div>
+            <input type="submit" value="Post" class="btn btn-primary my-2">
+        </form>
+    </div>
+</body>
+</html>

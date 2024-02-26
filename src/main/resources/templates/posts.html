@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>TestForum</title>
+</head>
+<body>
+<div layout:fragment="content" class="container my-3">
+    <div class="row justify-content-end">
+        <div class="col-auto input-group w-25">
+            <input id="search-keyword" type="text" class="form-control" th:value="${keyword}">
+            <button id="btn-search" class="btn btn-outline-dark" type="button">Search</button>
+        </div>
+    </div>
+    <table class="table">
+        <thead class="table-dark">
+            <tr>
+                <th>Post Number</th>
+                <th>Title</th>
+                <th>Posted by</th>
+                <th>Upvotes</th>
+                <th>Creation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="post, loop : ${posts}">
+                <td th:text="${post.id}"></td>
+                <td>
+                    <a th:href="@{|/api/v1/posts/${post.id}|}" th:text="${post.title}"></a>
+                    <span class="badge bg-secondary" th:text="${post.relatedComments.size()}">
+
+                    </span>
+                </td>
+                <td>
+                    <span th:if="${post.author != null}" th:text="${post.author.nickname}"></span>
+                </td>
+                <td th:text="${post.upvoters.size() - post.downvoters.size()}"></td>
+                <td th:text="${#temporals.format(post.postTime, 'dd-MM-yyyy HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div th:if="${!posts.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item bg-dark-subtle" th:classappend="${posts.number <= 10} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${posts.number -10}">
+                    <span><<</span>
+                </a>
+            </li>
+            <li class="page-item" th:classappend="${!posts.hasPrevious} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${posts.number -1}">
+                    <span>Prev</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(0, posts.totalPages -1)}"
+            th:classappend="${page == posts.number} ? 'active'" th:if="${page >= posts.number -5 and page <= posts.number+5}">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${page}" th:text="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!posts.hasNext} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${posts.number + 1}">
+                    <span>Next</span>
+                </a>
+            </li>
+            <li class="page-item bg-dark-subtle" th:classappend="${posts.totalPages - posts.number <= 10} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${posts.number +10}">
+                    <span>>></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <a th:href="@{/api/v1/posts/write}" class="btn btn-primary">Create post</a>
+    <form th:action="@{/api/v1/posts}" method="get" id="searchForm">
+        <input type="hidden" id="keyword" name="keyword" th:value="${keyword}">
+        <input type="hidden" id="page" name="page" th:value="${posts.number}">
+    </form>
+    <script layout:fragment="script" type='text/javascript'>
+        const page_elements = document.getElementsByClassName("page-link");
+        Array.from(page_elements).forEach(function(element) {
+            element.addEventListener('click', function() {
+                document.getElementById('page').value = this.dataset.page;
+                document.getElementById('searchForm').submit();
+            });
+        });
+        const btn_search = document.getElementById("btn-search");
+        btn_search.addEventListener('click', function() {
+            document.getElementById('keyword').value = document.getElementById('search-keyword').value;
+            document.getElementById('page').value = 0;
+            document.getElementById('searchForm').submit();
+        });
+    </script>
+</div>
+</body>
+</html>

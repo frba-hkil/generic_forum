@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <form th:action="@{/api/v1/users/login}" method="post" th:object="${loginForm}">
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                Check your ID or password.
+            </div>
+        </div>
+        <div>
+            <label for="username" class="form-label">ID</label>
+            <input type="text" id="username" name="username" class="form-control">
+        </div>
+        <div>
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary mx-3 my-3">Log-in</button>
+    </form>
+</div>
+</body>
+</html>
