@@ -1,1 +1,1 @@
-originalmente fue una rest api, los endpoints no son los optimos
+originalmente fue una rest api, los endpoints son de la rest api
